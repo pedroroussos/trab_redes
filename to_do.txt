@@ -1,9 +1,0 @@
-1. Implementar inserção de mensagens durante a execução
-
-2. Monitoramento de tokens (monitorar, adicionar e remover)
-
-3. Inserção aleatória e controle de erros
-
-4. Permitir broadcast de mensagens
-
-5. Adicionar mais mensagens de log
