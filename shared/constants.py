@@ -1,0 +1,1 @@
+QUEUE_MAX_SIZE = 10
