@@ -5,7 +5,7 @@ from domain.node import Node
 from domain.node import TokenGeneratorNode
 from domain.message_queue import MessageQueue
 from shared.constants import QUEUE_MAX_SIZE
-from shared.network import NETWORK_NICKNAMES
+from shared.network import NETWORK_aliasS
 
 
 class NodeFactory:
@@ -18,16 +18,16 @@ class NodeFactory:
       lines = [line.strip() for line in f.readlines() if line.strip()]
 
     next_ip, next_port = lines[0].split(':')
-    nickname = lines[1]
-    ip, port = NETWORK_NICKNAMES[nickname]
+    alias = lines[1]
+    ip, port = NETWORK_aliasS[alias]
     token_time = int(lines[2])
     is_gen = lines[3].lower() == 'true'
 
-    return ip, int(port), next_ip, int(next_port), nickname, token_time, is_gen
+    return ip, int(port), next_ip, int(next_port), alias, token_time, is_gen
 
 
   def create_node(self) -> BaseNode:
     """cria objeto Node a partir do arquivo de config"""
-    ip, port, next_ip, next_port, nickname, token_time, is_gen = self.__parse_config_file()
+    ip, port, next_ip, next_port, alias, token_time, is_gen = self.__parse_config_file()
     cls = TokenGeneratorNode if is_gen else Node
-    return cls(ip, port, next_ip, next_port, nickname, token_time, MessageQueue(QUEUE_MAX_SIZE))
+    return cls(ip, port, next_ip, next_port, alias, token_time, MessageQueue(QUEUE_MAX_SIZE))

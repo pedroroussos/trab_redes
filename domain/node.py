@@ -9,7 +9,7 @@ class BaseNode:
   port: int
   next_node_ip: str
   next_node_port: int
-  nickname: str
+  alias: str
   token_time: int
   message_queue: MessageQueue
 
@@ -23,7 +23,7 @@ class BaseNode:
     pass
 
   def __str__(self):
-    return f'{self.nickname}'
+    return f'{self.alias}'
 
 @dataclass
 class Node(BaseNode):

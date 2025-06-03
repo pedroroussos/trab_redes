@@ -5,7 +5,7 @@ class BaseEnum(Enum):
     return str(self.value)
 
 class ErrorControl(BaseEnum):
-  MNE = 'maquina_nao_existe'
+  MNE = 'maquinanaoexiste'
   ACK = 'ACK'
   NAK = 'NAK'
 
