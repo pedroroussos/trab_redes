@@ -5,7 +5,7 @@ from domain.node import Node
 from domain.node import TokenGeneratorNode
 from domain.message_queue import MessageQueue
 from shared.constants import QUEUE_MAX_SIZE
-from shared.network import NETWORK_aliasS
+from shared.network import NETWORK_STRUCTURE
 
 
 class NodeFactory:
@@ -19,7 +19,7 @@ class NodeFactory:
 
     next_ip, next_port = lines[0].split(':')
     alias = lines[1]
-    ip, port = NETWORK_aliasS[alias]
+    ip, port = NETWORK_STRUCTURE[alias]
     token_time = int(lines[2])
     is_gen = lines[3].lower() == 'true'
 
