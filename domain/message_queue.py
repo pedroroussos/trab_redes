@@ -4,6 +4,7 @@ from .packet import Message
 
 
 class MessageQueue:
+  """representa a fila de mensagens de um nodo"""
   def __init__(self, max_size: int):
     self.queue = deque()
     self.max_size = max_size

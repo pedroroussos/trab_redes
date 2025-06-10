@@ -1,2 +1,0 @@
-2000;Node1:Node3:maquinanaoexiste:479980042:xxx
-2000;Node1:TODOS:maquinanaoexiste:479980042:xxx

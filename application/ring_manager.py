@@ -11,15 +11,20 @@ from shared.enum_classes import ErrorControl
 from shared.constants import FAILURE_PROB
 
 class RingManager:
+  """Classe responsável por orquestrar a execução do nodo"""
   def __init__(self, node: BaseNode, udp_service: UDPService, logger: Logger):
     self.node = node
     self.udp_service = udp_service
     self.logger = logger
 
+
   def log(self, message: str):
+    """loga mensagem"""
     self.logger.info(f"[{self.node.alias}] {message}")
 
+
   def start(self):
+    """inicia nodo"""
     self.log("Starting node...")
     self.node.is_running = True
 
@@ -29,7 +34,12 @@ class RingManager:
 
     threading.Thread(target=self.listen, daemon=True).start()
 
+    if isinstance(self.node, TokenGeneratorNode):
+      self.node.monitor_token(self)
+
+
   def listen(self):
+    """escuta: recebe dados"""
     while self.node.is_running:
       try:
         raw_msg = self.udp_service.receive()
@@ -42,9 +52,14 @@ class RingManager:
       except TimeoutError:
         continue
 
+
   def handle_token(self):
+    """trata chegada do token ao nodo"""
     self.log("Received token.")
     self.node.has_token = True
+
+    if isinstance(self.node, TokenGeneratorNode):
+      self.node.register_token_arrival()
 
     message = self.node.message_queue.pop()
     if message is None:
@@ -54,7 +69,9 @@ class RingManager:
       self.log("Sending next message in queue.")
       self.send_message(message)
 
+
   def handle_message(self, message: Message):
+    """trata chegada de mensagem ao nodo"""
     if self.is_message_from_self(message):
       if message.is_broadcast:
         self.log("Broadcast message completed the ring. Dropping.")
@@ -70,11 +87,14 @@ class RingManager:
       self.log(f"Message not for this node (target is {message.target_alias}). Forwarding.")
       self.send_message(message)
 
+
   def is_message_from_self(self, message: Message) -> bool:
     return message.origin_alias == self.node.alias
 
+
   def is_message_for_self(self, message: Message) -> bool:
     return message.target_alias == self.node.alias
+
 
   def handle_message_return(self, message: Message):
     self.log("Message returned to origin.")
@@ -86,6 +106,7 @@ class RingManager:
       self.log("ACK received. Message successfully delivered.")
     elif message.error_control == ErrorControl.MNE:
       self.log("Target node does not exist. Deleting message.")
+
 
   def process_received_message(self, message: Message):
     self.log("Processing message addressed to this node.")
@@ -106,15 +127,18 @@ class RingManager:
       self.log("CRC check failed. Sending NAK.")
       message.error_control = ErrorControl.NAK
 
+
   def send_token(self):
+    """manda token para nodo à direita"""
     self.sleep_token_time()
     self.log("Sending token to next node.")
     token = Token()
     self.udp_service.send(repr(token), self.node.next_node_ip, self.node.next_node_port)
     self.node.has_token = False
 
+
   def send_message(self, message: Message):
-    self.sleep_token_time()
+    """manda mensagem para nodo à direita"""
     self.log(f"Forwarding message ({repr(message)}).")
     self.udp_service.send(repr(message), self.node.next_node_ip, self.node.next_node_port)
 

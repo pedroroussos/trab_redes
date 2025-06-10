@@ -2,12 +2,14 @@ import time
 import sys
 import threading
 from logging import basicConfig, getLogger, INFO
+import zlib
 
 from application.node_factory import NodeFactory
 from application.ring_manager import RingManager
 from infrastructure.udp_service import UDPService
 from domain.node import BaseNode
 from domain.packet import Packet
+from shared.enum_classes import ErrorControl
 
 basicConfig(
   filename='token_ring.log',
@@ -25,7 +27,9 @@ def start_input_loop(node: BaseNode):
       try:
         raw = input()
         try:
-          message = Packet.from_string(raw)
+          target_alias, message_text = raw.split(':')
+          packet = f'2000;{node.alias}:{target_alias}:{ErrorControl.MNE}:{zlib.crc32(message_text.encode())}:{message_text}'
+          message = Packet.from_string(packet)
           logger.info(f"[{node}] Adding message ({message}) to queue")
           node.message_queue.push(message)
         except Exception as e:
@@ -34,6 +38,7 @@ def start_input_loop(node: BaseNode):
       except Exception as e:
         print(f"Error sending message: {e}")
   threading.Thread(target=input_loop, daemon=True).start()
+
 
 def run_node(config_file_path: str) -> None:
   node_factory = NodeFactory(config_file_path)

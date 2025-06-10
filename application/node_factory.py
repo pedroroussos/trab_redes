@@ -9,6 +9,7 @@ from shared.network import NETWORK_STRUCTURE
 
 
 class NodeFactory:
+  """Cria nodo da rede a partir do arquivo .cfg"""
   def __init__(self, config_file_path: str):
     self.config_file_path = config_file_path
 

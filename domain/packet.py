@@ -4,6 +4,7 @@ from shared.enum_classes import NumSeq
 
 @dataclass
 class Packet:
+  """pacote de dados"""
   pass
 
   @staticmethod
@@ -21,6 +22,7 @@ class Packet:
 
 @dataclass
 class Token(Packet):
+  """pacote do tipo token"""
   pass
 
   def __post_init__(self):
@@ -32,6 +34,7 @@ class Token(Packet):
 
 @dataclass
 class Message(Packet):
+  """pacote do tipo mensagem"""
   origin_alias: str
   target_alias: str
   error_control: ErrorControl
